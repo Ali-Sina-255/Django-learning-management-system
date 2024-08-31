@@ -61,6 +61,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+AUTH_USER_MODEL = 'account.User'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -108,11 +109,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR  'static'
-STATICFILES_DIRS = ('core/static',)
+STATIC_ROOT = BASE_DIR  /'static/'
+STATICFILES_DIRS = ('config/static',)
 
 
-MEDIA_URL = 'media'
+MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
 
 # Default primary key field type
