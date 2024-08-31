@@ -6,7 +6,7 @@ class User(AbstractUser):
     full_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=200, unique=True)
     opt = models.CharField(max_length=6, blank=True, null=True)
- 
+    refresh_token = models.CharField(max_length=1000, blank=True, null=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
@@ -14,15 +14,11 @@ class User(AbstractUser):
         return self.username
 
     def save(self, *args, **kwargs):
-       
         email_username, domain = self.email.split("@")
-        
         if not self.first_name or self.full_name is None:
             self.first_name = email_username
-
         if not self.username or self.username is None:
             self.username = email_username
-            
         super(User, self).save(*args, **kwargs)
 
 
