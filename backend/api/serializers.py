@@ -13,7 +13,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         return token
 
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -50,3 +49,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+    
+
+class UserLogin(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['name','email']

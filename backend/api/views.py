@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from api import serializers as api_serializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.response import Response
 
 
 import random
@@ -43,3 +44,21 @@ class PasswordRegisterEmailVerifyApiView(generics.RetrieveAPIView):
         
             print(link)
         return user
+
+class PasswordChangeApiView(generics.CreateAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = api_serializer.UserSerializer
+    
+    def create(self, request, *args, **kwargs):
+        otp = request.data['otp']
+        uuidb64 = request.data['uuidb64']
+        password = request.data['password']
+        user = User.objects.get(id=uuidb64, otp=otp)
+        if user:
+            user.set_password(password)
+            user.opt = ''
+            user.save()
+            return Response({'message':"password change successfully.",}, status=status.HTTP_201_CREATED)
+        
+        else:
+            return Response({"messages":"User Does not exists!"}, status=status.HTTP_404_NOT_FOUND)
