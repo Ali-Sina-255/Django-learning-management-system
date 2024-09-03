@@ -28,9 +28,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`http://localhost:8038/users/${id}`);
-        const { image } = response.data;
-        setPreviewUrl(`http://localhost:8038/uploads/${image}`);
+
       } catch (error) {
         console.error("Error fetching user data:", error);
       }

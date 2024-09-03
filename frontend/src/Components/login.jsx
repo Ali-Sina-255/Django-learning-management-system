@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const naviagte = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -12,9 +13,14 @@ const Login = () => {
     e.preventDefault();
 
     try {
- 
-    } catch (err) {
- }
+      const form = { email, password };
+      console.log(form);
+      const res = await axios.post(
+        "http://localhost:8000/apis/user/login/",
+        form
+      );
+      naviagte("/dashboard");
+    } catch (err) {}
   };
 
   return (
