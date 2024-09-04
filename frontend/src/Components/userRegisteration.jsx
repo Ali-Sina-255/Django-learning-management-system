@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function UserRegistration() {
-    // State to hold form values
+    const navigate = useNavigate(); // Hook for navigation
     const [formData, setFormData] = useState({
         full_name: '',
         email: '',
@@ -10,10 +11,9 @@ function UserRegistration() {
         password2: ''
     });
 
-    // State to handle success or error messages
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState('');  // State for messages
+    const [popupVisible, setPopupVisible] = useState(false); // State for popup visibility
 
-    // Handle input changes
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -21,23 +21,34 @@ function UserRegistration() {
         });
     };
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Post the form data to the registration endpoint
             const res = await axios.post('http://localhost:8000/apis/user/register/', formData);
-            // Handle success (you can navigate or display a success message)
             setMessage('User registered successfully!');
+            setPopupVisible(true); // Show the popup
             setFormData({
                 full_name: '',
                 email: '',
                 password: '',
                 password2: ''
-            })
+            });
+
+            // Hide the popup after 3 seconds and navigate to /login
+            setTimeout(() => {
+                setPopupVisible(false);
+                navigate('/login');
+            }, 3000);
+
         } catch (err) {
-            // Handle error (display error message)
             setMessage('Registration failed. Please try again.');
+            setPopupVisible(true); // Show the popup
+
+            // Hide the popup after 3 seconds
+            setTimeout(() => {
+                setPopupVisible(false);
+            }, 3000);
+
             console.error(err);
         }
     };
@@ -45,7 +56,11 @@ function UserRegistration() {
     return (
         <div className="max-w-md mx-auto mt-10 p-6 border border-gray-300 rounded-lg shadow-lg">
             <h1 className="text-2xl font-bold mb-4">Register New User</h1>
-            {message && <p className="mb-4 text-center">{message}</p>}
+            {popupVisible && (
+                <div className={`fixed inset-x-0 top-0 p-4 ${message.includes('successfully') ? 'bg-green-500' : 'bg-red-500'} text-white text-center`}>
+                    {message}
+                </div>
+            )}
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label htmlFor="full_name" className="block text-gray-700 text-left">Full Name</label>
