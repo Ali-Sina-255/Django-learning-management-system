@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
 
-from account.models import User
+from account.models import Profile, User
 from shortuuid.django_fields import ShortUUIDField
 from moviepy.editor import VideoFileClip
 import math
@@ -13,7 +13,7 @@ class Teacher(models.Model):
     image = models.FileField(upload_to='course-file', blank=True, null=True, default='course.jpg')
     full_name = models.CharField(max_length=100)
     bio = models.TextField(null=True, blank=True)
-    about = models.TextField(null=True, blank=True)
+    job_description = models.TextField(null=True, blank=True)
     facebook = models.URLField(null=True, blank=True)
     twitter = models.URLField(null=True, blank=True)
     linkedin = models.URLField(null=True, blank=True)
@@ -47,6 +47,8 @@ LANGUAGE_CHOICES = (
     ('English', 'English'),
     ('Dari', 'Dari'),
     ('Pashto', 'Pashto'),
+    ("Chiness","Chiness"),
+    ("Arabic","Arabic"),
 )      
       
 LEVEL_CHOICES = (
@@ -54,6 +56,7 @@ LEVEL_CHOICES = (
     ('Intermediate', 'Intermediate'),
     ('Advanced', 'Advanced'),
 )
+
 
 TEACHER_COURSE_START_CHOICES = (
     ('Published', 'Published'),
@@ -141,3 +144,79 @@ class VariantItems(models.Model):
             duration_text = f"{minutes}m {seconds}s" #60m 30s
             self.content_duration = duration_text
             super().save(update_fields=['content_duration'])
+            
+            
+class Question_Answer(models.Model):
+    course =models.ForeignKey(Course, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True)
+    title =models.CharField(max_length=255)
+    question_a_id = ShortUUIDField(unique=True,length=6,max_length=30,alphabet='1234567890')
+    date = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self) -> str:
+        return f'{self.use.username} - {self.course.title}'
+    
+    class Meta:
+       ordering = ['-data']
+    
+    def Profile(self):
+        return Profile.objects.get(use=self.user)
+
+class Question_Answer_Message(models.Model):
+    course =models.ForeignKey(Course, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question_Answer, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True)
+    message = models.TextField(null=True,blank=True)
+    qam_id = ShortUUIDField(unique=True,length=6,max_length=30,alphabet='1234567890')
+    qa_id = ShortUUIDField(unique=True,length=6,max_length=30,alphabet='1234567890')
+    date = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self) -> str:
+        return f'{self.user.username}- {self.course.title}'
+    class Meta:
+        ordering = ['-data']
+        
+    
+    def Profile(self):
+        return Profile.objects.get(use=self.user)
+
+
+class Cart(models.Model):
+    course =models.ForeignKey(Course, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True)
+    price = models.DecimalField(max_digits=12,decimal_places=2,default=0.00)
+    total = models.DecimalField(max_digits=12,decimal_places=2,default=0.00)
+    counter = models.CharField(max_length=100,null=True,blank=True)
+    cart_id = ShortUUIDField(unique=True,length=6,max_length=30,alphabet='1234567890')
+    date = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self) -> str:
+        return self.course.title
+    
+
+PAYMENT_STATUS = (
+    (),
+    (),
+    (),
+    (),
+)
+    
+class CartOrder(models.Model):
+    student = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True)
+    teachers = models.ForeignKey(Teacher, blank=True)
+    sub_total = models.DecimalField(max_digits=12,decimal_places=2,default=0.00)
+    tax_fee = models.DecimalField(max_digits=12,decimal_places=2,default=0.00)
+    total = models.DecimalField(max_digits=12,decimal_places=2,default=0.00)
+    initial_total = models.DecimalField(max_digits=12,decimal_places=2,default=0.00)
+    saved = models.DecimalField(max_digits=12,decimal_places=2,default=0.00)
+    payment_status = models.CharField(choices=PAYMENT_STATUS,default='Processing')
+    full_name = models.CharField(max_length=200, null=True, blank=True)
+    email = models.CharField(max_length=255, null=True,blank=True)
+    country = models.CharField(max_length=255, null=True,blank=True)
+    coupons = models.ManyToManyField('api.Coupons', blank=True)
+    strip_session_id = models.CharField(max_length=1000, blank=True,null=True)
+    oid = ShortUUIDField(unique=True, length=6, max_length=20 ,alphabet='1234567890')
+    date = models.DateTimeField(default=timezone.now)
+    class Meta:
+        ordering = ['-data']
+      
