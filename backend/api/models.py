@@ -3,6 +3,8 @@ from django.utils.text import slugify
 from django.utils import timezone
 
 from account.models import User
+from shortuuid.django_fields import ShortUUIDField
+
 
 from moviepy.editor import VideoFileClip
 import math
