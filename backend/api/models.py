@@ -1,8 +1,12 @@
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
+
 from account.models import User
 from shortuuid.django_fields import ShortUUIDField
+from moviepy.editor import VideoFileClip
+import math
+
 
 class Teacher(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -79,3 +83,61 @@ class Course(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
+
+    # def students(self):
+    #     return EnrolledCourse.objects.filter(course=self)
+
+    # def curriculum(self):
+    #     return VariantItem.objects.filter(variant__course=self)
+
+    # def average_rating(self):
+    #     average_rating = Review.objects.filter(course=self, active=True).aggregate(avg_rating=models.Vag('rating'))
+    #     return average_rating['avg_rating']
+
+    # def rating_count(self):
+    #     return Review.objects.filter(course=self, active=True).count()
+
+
+    # def reviews(self):
+    #     return Review.objects.filter(course=self, active=True)
+    
+class Variant(models.Model):
+    course= models.ForeignKey(Course, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    variant_id = ShortUUIDField(unique=True,length=6,alphabet='1234567890')
+    date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self) -> str:
+        return self.title
+    
+    
+    # def variant_items(self):
+    #     return VariantItems.objects.filter(variant=self)
+
+
+class VariantItems(models.Model):
+    variant= models.ForeignKey(Variant, on_delete=models.CASCADE,related_name='variant_items')
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    file = models.FileField(upload_to='course-file')
+    variant_item_id = ShortUUIDField(unique=True,length=6,max_length=30,alphabet='1234567890')
+    duration = models.DurationField(null=True,blank=True)
+    content_duration = models.CharField(max_length=1000,null=True,blank=True)   
+    preview = models.BooleanField(default=False)
+    date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self) -> str:
+        return f'{self.variant.title}- {self.title}'
+    
+
+    def save(self,*args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.file:
+            clip = VideoFileClip(self.file.path)
+            duration_second = clip.duration
+            minutes, remainder = divmod(duration_second,60)
+            minutes = math.floor(minutes)
+            seconds = math.floor(remainder)
+            duration_text = f"{minutes}m {seconds}s" #60m 30s
+            self.content_duration = duration_text
+            super().save(update_fields=['content_duration'])
