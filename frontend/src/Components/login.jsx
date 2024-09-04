@@ -16,7 +16,7 @@ const Login = () => {
       const form = { email, password };
       console.log(form);
       const res = await axios.post(
-        "http://localhost:8000/apis/user/login/",
+        "http://localhost:8000/api/user/login",
         form
       );
       naviagte("/dashboard");
