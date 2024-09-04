@@ -66,7 +66,7 @@ function UserRegistration() {
                     <label htmlFor="full_name" className="block text-gray-700 text-left">Full Name</label>
                     <input
                         type="text"
-                        name="full_name"
+                        name="name"
                         id="full_name"
                         value={formData.full_name}
                         onChange={handleChange}
