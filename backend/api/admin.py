@@ -1,6 +1,8 @@
 from django.contrib import admin
 from api import models
 
+class AdmiNCourse(admin.ModelAdmin):
+    list_display = ['title','price']
 admin.site.register(models.Teacher)
 admin.site.register(models.Category)
 admin.site.register(models.Course)
