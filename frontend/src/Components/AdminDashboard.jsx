@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link, useMatch, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const token = sessionStorage.getItem("token");
@@ -9,33 +9,30 @@ const AdminDashboard = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  const useLogout = () => {
-    const logout = () => {
-      sessionStorage.removeItem("token");
-      sessionStorage.removeItem("id");
-      sessionStorage.removeItem("zone");
-      navigate("/");
-    };
-    return logout;
+  const logout = () => {
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("id");
+    sessionStorage.removeItem("zone");
+    navigate("/");
   };
 
-  if (!token) {
-    // navigate("/login");
-  }
-
   useEffect(() => {
+    if (!token) {
+      // navigate("/login");
+    }
+
     const fetchUser = async () => {
       try {
-
+        // Fetch user data if needed
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
 
     fetchUser();
-  }, [id]);
+  }, [token, id, navigate]);
 
   return (
     <div
@@ -48,7 +45,7 @@ const AdminDashboard = () => {
         className="bg-red-950 text-white p-4 flex justify-between items-center"
       >
         <div className="text-xl font-bold">
-          <img src='' alt="Logo" className=" size-14" />
+          <img src="" alt="Logo" className="size-14" />
         </div>
         <div>
           <p className="animate-pulse opacity-0 duration-100 sm:text-xl md:text-2xl lg:text-4xl gradient-text">
@@ -69,21 +66,19 @@ const AdminDashboard = () => {
                 to={`/profile/${id}`}
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
               >
-                <button>بازدید از پروفایل</button>
+                بازدید از پروفایل
               </Link>
-              <Link
-                onClick={useLogout()}
+              <button
+                onClick={logout}
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
               >
-                <button>خروج از دشبورد</button>
-              </Link>
+                خروج از دشبورد
+              </button>
             </div>
           )}
         </div>
-      </nav>
 
-      <div className="flex flex-grow flex-col md:flex-row">
-        {/* Hamburger Menu for Mobile */}
+        {/* Mobile Hamburger Menu */}
         <div className="bg-red-950 text-white p-4 md:hidden flex justify-between items-center">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -92,21 +87,24 @@ const AdminDashboard = () => {
             ☰
           </button>
         </div>
-
+      </nav>
+      <div className="flex flex-grow flex-col md:flex-row">
         {/* Sidebar */}
         <aside
           className={`bg-red-700 text-white w-full md:w-1/4 p-4 transform ${
             sidebarOpen
               ? "translate-x-0 "
               : "hidden md:flex lg:flex -translate-x-full"
-          } hi md:translate-x-0 transition-transform duration-300 ease-in-out`}
+          } md:translate-x-0 transition-transform duration-300 ease-in-out`}
         >
           <ul>
             <li
               className={`p-2 cursor-pointer ${
                 selectedOption === "CreateAppointment" && "bg-red-600"
               }`}
-              onClick={() => setSelectedOption("CreateAppointment")}
+              onClick={() => {
+                setSelectedOption("CreateAppointment"), setSidebarOpen(false);
+              }}
             >
               نوبت دهی
             </li>
@@ -114,7 +112,9 @@ const AdminDashboard = () => {
               className={`p-2 cursor-pointer ${
                 selectedOption === "CreateAccount" && "bg-red-600"
               }`}
-              onClick={() => setSelectedOption("CreateAccount")}
+              onClick={() => {
+                setSelectedOption("CreateAppointment"), setSidebarOpen(false);
+              }}
             >
               ایجاد حساب کاربری جدید
             </li>
@@ -122,7 +122,9 @@ const AdminDashboard = () => {
               className={`p-2 cursor-pointer mt-2 ${
                 selectedOption === "DeleteAccount" && "bg-red-600"
               }`}
-              onClick={() => setSelectedOption("DeleteAccount")}
+              onClick={() => {
+                setSelectedOption("CreateAppointment"), setSidebarOpen(false);
+              }}
             >
               حذف حساب کاربری
             </li>
@@ -130,7 +132,9 @@ const AdminDashboard = () => {
               className={`p-2 cursor-pointer mt-2 ${
                 selectedOption === "report" && "bg-red-600"
               }`}
-              onClick={() => setSelectedOption("report")}
+              onClick={() => {
+                setSelectedOption("CreateAppointment"), setSidebarOpen(false);
+              }}
             >
               گزارشات
             </li>
@@ -147,35 +151,37 @@ const AdminDashboard = () => {
 
         {/* Main Content */}
         <main className="flex-grow bg-gray-100 p-4">
-          {selectedOption === "CreateAccount" ? (
+          {selectedOption === "CreateAccount" && (
             <section className="dir-rtl">
               <h2 className="text-xl font-semibold mb-4">
                 ایجاد حساب کاربری جدید
               </h2>
-              <RegisterUser id={id} />
+              {/* <RegisterUser id={id} /> */}
             </section>
-          ) : selectedOption === "DeleteAccount" ? (
+          )}
+          {selectedOption === "DeleteAccount" && (
             <section>
               <h2 className="text-xl font-semibold mb-4">حذف حساب کاربری</h2>
-              <DeleteUser id={id} />
+              {/* <DeleteUser id={id} /> */}
             </section>
-          ) : selectedOption === "CreateAppointment" ? (
+          )}
+          {selectedOption === "CreateAppointment" && (
             <section>
               <h2 className="text-xl font-semibold mb-4">نوبت دهی</h2>
-              <CreateAppointment id={id} />
+              {/* <CreateAppointment id={id} /> */}
             </section>
-          ) : selectedOption === "report" ? (
+          )}
+          {selectedOption === "report" && (
             <section>
               <h2 className="text-xl font-semibold mb-4">گزارشات</h2>
-              <Reporting id={id} />
+              {/* <Reporting id={id} /> */}
             </section>
-          ): selectedOption === "users" ? (
+          )}
+          {selectedOption === "users" && (
             <section>
-              <h2 className="text-xl font-semibold mb-4">گزارشات</h2>
-              <UsersInZone />
+              <h2 className="text-xl font-semibold mb-4">کارمندان زون</h2>
+              {/* <UsersInZone /> */}
             </section>
-          ) : (
-            <section></section>
           )}
         </main>
       </div>
