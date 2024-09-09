@@ -26,7 +26,11 @@ TEACHER_COURSE_START_CHOICES = (
     ('Disabled', 'Disabled'),
     ('Draft', 'Draft'),
 )
-
+PLATFORM_STATUS_CHOICES = (
+    ('Published', 'Published'),
+    ('Pending', 'Pending'),
+    ('Draft', 'Draft'),
+)
 RATING_STATUS = (
     (1, "1 Star"),
     (2, "2 Star"),
@@ -58,6 +62,7 @@ class Teacher(models.Model):
 
 class Category(models.Model):
     title = models.CharField(max_length=255)
+    active = models.BooleanField(default=True)
     image = models.FileField(upload_to='course-file/category/')
     slug = models.SlugField(max_length=255, unique=True)
     
@@ -88,6 +93,7 @@ class Course(models.Model):
     language = models.CharField(max_length=100, choices=LANGUAGE_CHOICES, default='English')
     level = models.CharField(max_length=100, choices=LEVEL_CHOICES, default='Beginner')
     teacher_course_start = models.CharField(max_length=255, choices=TEACHER_COURSE_START_CHOICES)
+    platform_status = models.CharField(max_length=255, choices=PLATFORM_STATUS_CHOICES)
     course_id = ShortUUIDField(unique=True, max_length=30, length=6, alphabet='1234567890')
     slug = models.SlugField(unique=True, null=True, blank=True)
     date = models.DateTimeField(default=timezone.now)
@@ -98,8 +104,11 @@ class Course(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
-        super().save(*args, **kwargs)
-
+        super(Course,self).save(*args, **kwargs)
+    
+    def lectures(self):
+        return VariantItem.objects.filter(variant__course=self)
+    
     def students(self):
         return EnrolledCourse.objects.filter(course=self)
 
@@ -193,8 +202,8 @@ class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     total = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-    counter = models.CharField(max_length=100, null=True, blank=True)
-    cart_id = ShortUUIDField(unique=True, length=6, max_length=30, alphabet='1234567890')
+    country = models.CharField(max_length=100, null=True, blank=True)
+    cart_id = ShortUUIDField(length=6, max_length=30, alphabet='1234567890')
     date = models.DateTimeField(default=timezone.now)
     
     def __str__(self) -> str:
