@@ -198,3 +198,55 @@ class CartStatsApiView(generics.RetrieveAPIView):
     
     def calculate_total(self, cart_item):
         return cart_item.price
+    
+    
+
+class CreateOrderAPIView(generics.CreateAPIView):
+    serializer_class = api_serializer.CartOrderSerializer
+    permission_classes = [AllowAny]
+    queryset = api_models.CartOrder.objects.all()
+    
+    
+    def create(self, request, *args, **kwargs):
+        full_name = request.data['full_name']
+        email = request.data['email']
+        country = request.data['country']
+        cart_id = request.data['cart_id']
+        user_id = request.data['user_id']
+        
+        if user_id !=0:
+            user = User.objects.get(id=user_id)
+        else:
+            user = None
+            
+        cart_items = api_models.Cart.objects.filter(cart_id=cart_id)
+        total_price = Decimal(0.00)
+        total_tax = Decimal(0.00)
+        total_initial_total = Decimal(0.00)
+        total_total = Decimal(0.00)
+        order = api_models.CartOrder.objects.create(
+            full_name=full_name,
+            email=email,
+            country=country,
+            student=user
+            )
+        
+        for card in cart_items:
+            api_models.CartOrderItem.objects.create(
+                order=order,
+                course=card.course,
+                price = card.price,
+                total = card.total,
+                initial_total = card.initial_total,
+                teacher = card.course.teacher    
+            )
+            total_price += Decimal(card.price)
+            total_initial_total += Decimal(card.total)
+            total_total += Decimal(card.total)
+            
+            order.teachers.add(card.course.teacher)
+        order.sub_total = total_price
+        order.initial_total = total_initial_total
+        order.total = total_total
+        order.save()
+        return Response({"message":"Your order is created successfully."}, status=status.HTTP_201_CREATED)
