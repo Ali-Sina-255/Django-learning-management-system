@@ -44,6 +44,7 @@ NOTE_TYPE_CHOICES = (
     ("New Review","New Review"),
     ("New Course Question","New Course Question"),
     ("Draft","Draft"),
+    ("Course Enrollment Completed","Course Enrollment Completed"),
 )
 
 class Teacher(models.Model):
@@ -232,11 +233,15 @@ class CartOrder(models.Model):
     oid = ShortUUIDField(unique=True, length=6, max_length=20, alphabet='1234567890')
     date = models.DateTimeField(default=timezone.now)
 
+    def __str__(self) -> str:
+        return self.student.full_name
     class Meta:
         ordering = ['-date']
         
     def order_items(self):
         return CartOrderItem.objects.filter(order=self)
+    
+    
     
 class CartOrderItem(models.Model):
     order = models.ForeignKey(CartOrder, on_delete=models.CASCADE, related_name='order_items')
@@ -300,7 +305,7 @@ class EnrolledCourse(models.Model):
         return Variant.objects.filter(course=self.course)
     
     def note(self):
-        return Node.objects.get(course=self.course)
+        return Note.objects.filter(course=self.course)
     
     def question_answer(self):
         return Question_Answer.objects.filter(course=self.course)

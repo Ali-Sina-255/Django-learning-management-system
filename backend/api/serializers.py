@@ -74,18 +74,18 @@ class TeacherSerializer(serializers.ModelSerializer):
         model = serializer_model.Teacher
 
 
+class VariantSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ['course','title','variant_id','date']
+        model = serializer_model.Variant
+
+
 
 class VariantItemSerializer(serializers.ModelSerializer):
+    variant = VariantSerializer()
     class Meta:
         fields = '__all__'
         model = serializer_model.VariantItem
-
-class VariantSerializer(serializers.ModelSerializer):
-    variant_items = VariantItemSerializer()
-    class Meta:
-        fields = ['course','title','variant_id','date', 'variant_items']
- 
-        model = serializer_model.Variant
 
 class CompletedLessonSerializer(serializers.ModelSerializer):
     class Meta:
@@ -143,17 +143,19 @@ class CartSerializer(serializers.ModelSerializer):
         model = serializer_model.Cart
         fields = '__all__'
 
+class CartOrderSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = serializer_model.CartOrder
+        fields = ['student','teachers','sub_total','tax_fee','total','initial_total','saved','payment_status','full_name','email','country','coupons','stripe_session_id','oid','date']
+
+
+
 class CartOrderItemSerializer(serializers.ModelSerializer):
+    order= CartOrderSerializer()
     class Meta:
         model = serializer_model.CartOrderItem
         fields = '__all__'
-
-class CartOrderSerializer(serializers.ModelSerializer):
-    order_items = CartOrderItemSerializer()
-    class Meta:
-        model = serializer_model.CartOrder
-        fields = '__all__'
-
 
 class CertificateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -183,3 +185,12 @@ class CounterSerializer(serializers.ModelSerializer):
     class Meta:
         model = serializer_model.Counter
         fields = '__all__'
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    pass
+
+class StudentSummarySerializer(serializers.Serializer):
+    total_course = serializers.IntegerField(default=0)
+    completed_lessons = serializers.IntegerField(default=0)
+    achieved_certificates = serializers.IntegerField(default=0)

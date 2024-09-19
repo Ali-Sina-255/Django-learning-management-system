@@ -17,4 +17,17 @@ urlpatterns = [
     path('course/cart-list/<cart_id>/', api_views.CartAPIView.as_view()),
     path('course/cart-item-delete/<cart_id>/<item_id>/', api_views.CartItemDeleteApiView.as_view()),
     path('cart/stats/<cart_id>/', api_views.CartStatsApiView.as_view()),
+    path('order/create-order/', api_views.CreateOrderAPIView.as_view()),
+    path('order/checkout/<oid>/', api_views.CheckOutApiView.as_view()),
+    path('order/coupon/', api_views.CouponApiView.as_view()),
+    path('payment/payment-success/',api_views.PaymentSuccessApiView.as_view()),
+    
+    
+    # student
+    path('student/summary/<user_id>/', api_views.StudentSummaryApiView.as_view()),
+    path('student/course-list/<user_id>/', api_views.StudentCourseListApiView.as_view()),
+    path('student/course-detail/<user_id>/<enrolled_id>/', api_views.StudentCourseDetailApiView.as_view()),
+    path('student/course-completed/', api_views.StudentCourseCompletedApiView.as_view()),
+    
+
 ]

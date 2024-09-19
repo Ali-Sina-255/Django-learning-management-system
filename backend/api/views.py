@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.conf import settings
+
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
@@ -6,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 
 import random
+import requests
 from decimal import Decimal
 from api import serializers as api_serializer
 from api import models as api_models
@@ -250,3 +253,180 @@ class CreateOrderAPIView(generics.CreateAPIView):
         order.total = total_total
         order.save()
         return Response({"message":"Your order is created successfully."}, status=status.HTTP_201_CREATED)
+
+
+class CheckOutApiView(generics.RetrieveAPIView):
+    serializer_class = api_serializer.CartOrderSerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'oid'
+    queryset = api_models.CartOrder.objects.all()
+   
+   
+
+class CouponApiView(generics.CreateAPIView):
+    serializer_class = api_serializer.CouponSerializer
+    permission_classes = [AllowAny]
+    def create(self, request, *args, **kwargs):
+        order_oid = request.data['order_oid']
+        coupon_code = request.data['coupon_code']
+        order = api_models.CartOrder.objects.get(oid=order_oid)
+        coupon = api_models.Coupon.objects.get(code=coupon_code)
+        if coupon:
+            order_items = api_models.CartOrder.objects.filter(order=order, teacher=coupon.teacher)
+            for i in order_items:
+                if not coupon in order.coupons:
+                    discount = i.total * coupon.discount
+                    i.total = discount
+                    i.price= discount
+                    i.saved = discount
+                    i.applied_coupon = True
+                    i.coupons.add(coupon)
+                    order.coupons.add(coupon)
+                    order.total -= discount
+                    order.sub_total -= discount
+                    order.saved += discount
+                    i.save()
+                    order.save()
+                    coupon.used_by.add(order.student)
+                    
+                    return Response({"message":"Coupon Found and Activated ."}, status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'message':'Coupon Already Applied .',},status=status.HTTP_200_OK)
+        else:
+            raise Response({"message":"Coupon Not Found."}, status=status.HTTP_404_NOT_FOUND) ()
+       
+
+
+def get_access_token(clint_id,secret_key):
+    token_url = 'https://api.sandbox.paypal.con/v1/oauth/token'
+    data = {'grant_type':'clint_credentials'}
+    auth = (clint_id, secret_key)
+    response = requests.get(token_url,data=data, auth=auth)
+    if response.status_code == 200:
+        print('Access Token =====>', response.json()['access_token'])
+        return response.json()['access_token']
+    else:
+        raise Exception(f"Failed to get access token form paypal {response.status_code}")
+    
+# PAYPAL_CLIENT_ID = settings.PAYPAL_CLIENT_ID  # this come from .env
+# PAYPAL_SECRET_ID = settings.PAYPAL_SECRET_ID # this come from .env
+
+class PaymentSuccessApiView(generics.CreateAPIView):
+    serializer = api_serializer.CartOrderSerializer
+    def get_queryset(self):
+        return api_models.CartOrder.objects.all()
+    
+    def create(self, request, *args, **kwargs):
+        order_id = request.data['order_id']
+        paypal_order_id = request.data['paypal_order_id']
+    
+        order = api_models.CartOrder.objects.get(id=order_id)
+        order_items = api_models.CartOrderItem.objects.filter(order=order) 
+        
+        # paypal payment success
+        if paypal_order_id != 'null':
+            paypal_api_url = f"https://api-m.sandbox.paypal.com/v2/checkout/orders/{paypal_order_id}"
+            headers = {
+                "Content-Type":'application/json',
+                # "Authorization":f"Bearer {get_access_token(PAYPAL_CLIENT_ID,PAYPAL_SECRET_ID)}"
+            }
+            response = requests.get(paypal_api_url, headers=headers)
+            if response.status_code == 200:
+                paypal_order_data = response.data
+                paypal_payment_status = paypal_order_data['status']
+                if paypal_payment_status == 'COMPLETED':
+                    if order.payment_status == 'Processing':
+                        order.payment_status  == "Paid"
+                        order.save()
+                        api_models.Notification.objects.create(user=order.student,order=order,type='Course Enrollment Completed')
+                        for o in order_items:
+                            api_models.Notification.objects.create(
+                                teacher= o.teacher,
+                                order = order,
+                                order_items = o,
+                                type = 'New Order'
+                            )
+                            api_models.EnrolledCourse.objects.create(
+                                course = o.course,
+                                user = order.student,
+                                teacher = o.teacher,
+                                order_items = o
+                                
+                    
+                            )
+                    else:
+                        return Response({"message":"You have already paid. Thanks you"})
+                else:
+                    return Response({"message":"Payment is not successfully."})
+            return Response({"message":"An API error is Occured from paypal."})
+        
+
+class SearchCourseApiView(generics.ListAPIView):
+    serializer_class = api_serializer.CounterSerializer
+    parser_classes = [AllowAny]
+
+    
+    def get_queryset(self):
+        query =  self.request.GET.get('query')
+        return api_models.Course.objects.filter(title__icontains=query, teacher_course_start='Published', platform_status='Published')
+    
+
+class StudentSummaryApiView(generics.ListAPIView):
+    serializer_class = api_serializer.StudentSummarySerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        user = User.objects.get(id=user_id)
+        total_courser = api_models.EnrolledCourse.objects.filter(user=user).count()
+        completed_lesson = api_models.CompletedLesson.objects.filter(user=user).count()
+        achieved_certificates = api_models.Certificate.objects.filter(user=user).count()
+    
+        return [{'total_course':total_courser,"completed_lessons":completed_lesson,"achieved_certificates":achieved_certificates}]
+                            
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class StudentCourseListApiView(generics.ListAPIView):
+    serializer_class = api_serializer.EnrolledCourseSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        user = User.objects.get(id=user_id)
+        return api_models.EnrolledCourse.objects.filter(user=user)
+    
+
+class StudentCourseDetailApiView(generics.RetrieveAPIView):
+    serializer_class = api_serializer.EnrolledCourseSerializer
+    permission_classes = [AllowAny]
+    lookup_field = 'enrolled_id'
+    
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        enrolled_id = self.kwargs['enrolled_id']
+        user = User.objects.get(id=user_id)
+        return api_models.EnrolledCourse.objects.get(user=user, enrolled_id=enrolled_id)
+    
+class StudentCourseCompletedApiView(generics.CreateAPIView):
+    serializer_class = api_serializer.CompletedLessonSerializer
+    permission_classes = [AllowAny]
+    
+    def create(self, request, *args, **kwargs):
+        user_id = request.data['user_id']
+        course_id = request.data['course_id']
+        variant_item_id = request.data['variant_item_id']
+
+        user = User.objects.get(id=user_id)
+        course = api_models.Course.objects.get(id=course_id)
+        variant_item = api_models.VariantItem.objects.get(variant_item_id=variant_item_id)
+        completed_lesson = api_models.CompletedLesson.objects.filter(user=user, course=course,variant_item=variant_item).first()
+        if completed_lesson:
+            completed_lesson.delete()
+            return Response({'message':"Course marked as not completed"})
+        else:
+            api_models.CompletedLesson.objects.create(user=user, course=course,variant_item=variant_item)
+            return Response({'message':"Course marked as completed"})
