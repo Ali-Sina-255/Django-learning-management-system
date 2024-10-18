@@ -48,7 +48,7 @@ NOTE_TYPE_CHOICES = (
 )
 
 class Teacher(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='teachers')
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.FileField(upload_to='course-file', blank=True, null=True, default='course.jpg')
     full_name = models.CharField(max_length=100)
     bio = models.TextField(null=True, blank=True)
@@ -60,7 +60,16 @@ class Teacher(models.Model):
     
     def __str__(self) -> str:
         return self.full_name
+    
+    def students(self):
+        return CartOrderItem.objects.filter(teacher=self)
 
+    def course(self):
+        return Course.objects.filter(teacher=self)
+    
+    def review(self):
+        return Course.objects.filter(teacher=self).count()
+    
 class Category(models.Model):
     title = models.CharField(max_length=255)
     active = models.BooleanField(default=True)
@@ -137,6 +146,7 @@ class Variant(models.Model):
 
     def variant_items(self):
         return VariantItem.objects.filter(variant=self)
+    
 
 class VariantItem(models.Model):
     variant = models.ForeignKey(Variant, on_delete=models.CASCADE, related_name='variant_items')
@@ -176,9 +186,11 @@ class Question_Answer(models.Model):
 
     class Meta:
        ordering = ['-date']
+    def massage(self):
+        return Question_Answer_Message.objects.filter(question=self)
     
     def profile(self):
-        return Profile.objects.get(user=self.user)
+        return Profile.objects.filter(user=self.user)
 
 class Question_Answer_Message(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -211,14 +223,14 @@ class Cart(models.Model):
         return self.course.title
 
 PAYMENT_STATUS = (
-    ('pending', 'Pending'),
+    ('Paid', 'Paid'),
     ('completed', 'Completed'),
     ('failed', 'Failed'),
 )
 
 class CartOrder(models.Model):
     student = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    teachers = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
+    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True)
     sub_total = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     tax_fee = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     total = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
@@ -234,7 +246,7 @@ class CartOrder(models.Model):
     date = models.DateTimeField(default=timezone.now)
 
     def __str__(self) -> str:
-        return self.student.full_name
+        return str(self.full_name)
     class Meta:
         ordering = ['-date']
         
@@ -265,7 +277,8 @@ class CartOrderItem(models.Model):
     
     def payment_status(self):
         return self.oid
-
+    
+  
 class Certificate(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
@@ -287,8 +300,8 @@ class CompletedLesson(models.Model):
 class EnrolledCourse(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    teacher = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='teacher' ,null=True, blank=True)
-    enrolled_id = models.DateTimeField(default=timezone.now)
+    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, related_name='teacher' ,null=True, blank=True)
+    enrolled_id = ShortUUIDField(unique=True, length=6, max_length=20, alphabet='1234567890')
     date = models.DateTimeField(default=timezone.now)
     order_item = models.ForeignKey(CartOrderItem, on_delete=models.CASCADE)
 

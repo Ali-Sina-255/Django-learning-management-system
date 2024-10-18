@@ -1,0 +1,29 @@
+{
+  "name": "react-rater",
+  "main": "dist/react-rater.js",
+  "version": "0.2.1",
+  "homepage": "https://github.com/NdYAG/react-rater",
+  "authors": [
+    "ndyag"
+  ],
+  "description": "Star rater",
+  "keywords": [
+    "react",
+    "react-component",
+    "rater",
+    "star-rater"
+  ],
+  "license": "BSD",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "__tests__",
+    "src",
+    "lib",
+    "package.json",
+    "webpack*"
+  ]
+}

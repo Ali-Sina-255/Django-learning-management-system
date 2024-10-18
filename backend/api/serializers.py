@@ -68,10 +68,6 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['title', 'image', 'slug', 'course_count']
 
 
-class TeacherSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = ['user', 'image', 'full_name', 'bio', 'job_description', 'facebook', 'twitter', 'linkedin', 'counter']
-        model = serializer_model.Teacher
 
 
 class VariantSerializer(serializers.ModelSerializer):
@@ -95,7 +91,7 @@ class CompletedLessonSerializer(serializers.ModelSerializer):
 
 class NoteSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = '__all__'
+        fields = ["title","note","course", "user","note_id", "date"]
         model = serializer_model.Note
         
 
@@ -147,7 +143,7 @@ class CartOrderSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = serializer_model.CartOrder
-        fields = ['student','teachers','sub_total','tax_fee','total','initial_total','saved','payment_status','full_name','email','country','coupons','stripe_session_id','oid','date']
+        fields = ['student','teacher','sub_total','tax_fee','total','initial_total','saved','payment_status','full_name','email','country','coupons','stripe_session_id','oid','date']
 
 
 
@@ -188,9 +184,26 @@ class CounterSerializer(serializers.ModelSerializer):
 
 
 class NotificationSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model = serializer_model.Notification
+        fields = '__all__'
 
 class StudentSummarySerializer(serializers.Serializer):
     total_course = serializers.IntegerField(default=0)
     completed_lessons = serializers.IntegerField(default=0)
     achieved_certificates = serializers.IntegerField(default=0)
+    
+
+class TeacherSummarySerializer(serializers.Serializer):
+    total_course = serializers.IntegerField(default=0)
+    total_student = serializers.IntegerField(default=0)
+    total_revenue = serializers.IntegerField(default=0)
+    monthly_revenue = serializers.IntegerField(default=0)
+    
+    
+
+class TeacherSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ['user','image', 'full_name','bio', 'job_description', 'facebook', 'twitter', 'linkedin', 'counter']
+        model = serializer_model.Teacher
