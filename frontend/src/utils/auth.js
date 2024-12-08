@@ -1,4 +1,4 @@
-import { userAuthStore } from "../Store/auth";
+import { useAuthStore } from "../Store/auth";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 
@@ -10,7 +10,7 @@ export const login = async (email, password) => {
       password,
     });
     if (status == 200) {
-      userAuthStore(data.access, data.refresher);
+      setAuthUser(data.access, data.refresher);
       alert("Login successfully!");
     }
   } catch (error) {
@@ -44,7 +44,7 @@ export const register = async (full_name, email, password, password2) => {
 export const logout = () => {
   Cookie.remove("access_token");
   Cookie.remove("refresh_token");
-  userAuthStore.getState().setUser(null);
+  useAuthStore.getState().setUser(null);
   alert("You have been Logout successfully...");
 };
 
@@ -79,9 +79,9 @@ export const setAuthUser = (access_token, refresh_token) => {
 
   const user = jwt_decode("access_token") ?? null;
   if (user) {
-    userAuthStore.getState().setUser(user);
+    useAuthStore.getState().setUser(user);
   }
-  userAuthStore.getState().setLoading(false);
+  useAuthStore.getState().setLoading(false);
 };
 
 export const getRefreshToken = async () => {
