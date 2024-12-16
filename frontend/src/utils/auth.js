@@ -2,6 +2,7 @@ import { useAuthStore } from "../Store/auth";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
+const baseURl = "http://localhost:8000/";
 // login user
 export const login = async (email, password) => {
   try {
@@ -24,7 +25,7 @@ export const login = async (email, password) => {
 // Register User
 export const register = async (full_name, email, password, password2) => {
   try {
-    const { data } = await axios.post(`api/user/register/`, {
+    const { data } = await axios.post(`${baseURl}/user/register/`, {
       full_name,
       email,
       password,
@@ -67,12 +68,12 @@ export const setUser = async () => {
 };
 
 export const setAuthUser = (access_token, refresh_token) => {
-  Cookie.set("access_token", access_token, {
+  Cookies.set("access_token", access_token, {
     expires: 1,
     secure: true,
   });
 
-  Cookie.set("refresh_token", refresh_token, {
+  Cookies.set("refresh_token", refresh_token, {
     expires: 7,
     secure: true,
   });
