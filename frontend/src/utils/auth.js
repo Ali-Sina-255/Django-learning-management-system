@@ -1,7 +1,7 @@
 import { useAuthStore } from "../Store/auth";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-
+import Cookies from "js-cookie";
 // login user
 export const login = async (email, password) => {
   try {
@@ -42,15 +42,15 @@ export const register = async (full_name, email, password, password2) => {
 // logout user
 
 export const logout = () => {
-  Cookie.remove("access_token");
-  Cookie.remove("refresh_token");
+  Cookies.remove("access_token");
+  Cookies.remove("refresh_token");
   useAuthStore.getState().setUser(null);
   alert("You have been Logout successfully...");
 };
 
 export const setUser = async () => {
-  const access_token = Cookie.get("access_token");
-  const refresh_token = Cookie.get("refresh_token");
+  const access_token = Cookies.get("access_token");
+  const refresh_token = Cookies.get("refresh_token");
   if (!access_token || !refresh_token) {
     alert("Token Does not exist!!");
     return;
@@ -85,7 +85,7 @@ export const setAuthUser = (access_token, refresh_token) => {
 };
 
 export const getRefreshToken = async () => {
-  const refresh_token = Cookie.get("refresh_token");
+  const refresh_token = Cookies.get("refresh_token");
   const response = await axios.post("user/token/refresh/", {
     refresh: refresh_token,
   });

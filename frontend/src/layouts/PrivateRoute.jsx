@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-dom";
-import { userAuthStore } from "../Store/auth";
+import { useAuthStore } from "../Store/auth";
 
 const PrivateRoute = ({ children }) => {
-  const loggedIn = userAuthStore((state) => state.isLoggedIn)();
+  const loggedIn = useAuthStore((state) => state.isLoggedIn)();
   return loggedIn ? <>{children}</> : <Navigate to="/login/" />;
 };
 export default PrivateRoute;

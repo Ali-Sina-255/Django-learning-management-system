@@ -1,15 +1,17 @@
-import React from 'react'
-import BaseHeader from '../partials/BaseHeader'
-import BaseFooter from '../partials/BaseFooter'
-import { Link } from 'react-router-dom'
-
+import React from "react";
+// import BaseHeader from '../partials/BaseHeader'
+// import BaseFooter from '../partials/BaseFooter'
+import { Link } from "react-router-dom";
 
 function Login() {
   return (
     <>
-      <BaseHeader />
+      {/* <BaseHeader /> */}
 
-      <section className="container d-flex flex-column vh-100" style={{ marginTop: "150px" }}>
+      <section
+        className="container d-flex flex-column vh-100"
+        style={{ marginTop: "150px" }}
+      >
         <div className="row align-items-center justify-content-center g-0 h-lg-100 py-8">
           <div className="col-lg-5 col-md-8 py-8 py-xl-0">
             <div className="card shadow">
@@ -82,7 +84,7 @@ function Login() {
                   <div>
                     <div className="d-grid">
                       <button type="submit" className="btn btn-primary">
-                        Sign in <i className='fas fa-sign-in-alt'></i>
+                        Sign in <i className="fas fa-sign-in-alt"></i>
                       </button>
                     </div>
                   </div>
@@ -93,10 +95,9 @@ function Login() {
         </div>
       </section>
 
-
-      <BaseFooter />
+      {/* <BaseFooter /> */}
     </>
-  )
+  );
 }
 
-export default Login
+export default Login;
