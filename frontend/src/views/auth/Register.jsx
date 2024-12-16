@@ -1,12 +1,11 @@
 import React from "react";
-// import BaseHeader from '../partials/BaseHeader'
-// import BaseFooter from '../partials/BaseFooter'
 import { Link } from "react-router-dom";
-
+import BaseHeader from "../../partials/BaseHeader";
+import BaseFooter from "../../partials/BaseFooter";
 function Register() {
   return (
     <>
-      {/* <BaseHeader /> */}
+      <BaseHeader />
 
       <section
         className="container d-flex flex-column vh-100"
@@ -96,7 +95,7 @@ function Register() {
         </div>
       </section>
 
-      {/* <BaseFooter /> */}
+      <BaseFooter />
     </>
   );
 }
