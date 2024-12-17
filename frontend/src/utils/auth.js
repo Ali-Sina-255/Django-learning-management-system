@@ -48,10 +48,16 @@ export const register = async (full_name, email, password, password2) => {
 // logout user
 
 export const logout = () => {
+  // Remove the tokens from cookies
   Cookies.remove("access_token");
   Cookies.remove("refresh_token");
+
+  // Set the user data to null in the store
   useAuthStore.getState().setUser(null);
-  alert("You have been Logout successfully...");
+
+  // Optionally, you can call the setLoading function to set loading to false after logout
+  useAuthStore.getState().setLoading(false);
+
 };
 
 export const setUser = async () => {
