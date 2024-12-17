@@ -1,12 +1,36 @@
-import React from "react";
-// import BaseHeader from '../partials/BaseHeader'
-// import BaseFooter from '../partials/BaseFooter'
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import BaseHeader from "../../partials/BaseHeader";
+import BaseFooter from "../../partials/BaseFooter";
+
+import apiInstance from "../../utils/axios";
+import { login } from "../../utils/auth";
+import Swal from "sweetalert2";
+
+import { Link, useNavigate } from "react-router-dom";
+import { use } from "react";
 
 function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
+  const handelSubmitFrom = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    console.log("handelSubmitFrom");
+    const { error } = await login(email, password);
+    if (error) {
+      alert(error);
+      setIsLoading(false);
+    } else {
+      navigate("/");
+      setIsLoading(false);
+    }
+  };
   return (
     <>
-      {/* <BaseHeader /> */}
+      <BaseHeader />
 
       <section
         className="container d-flex flex-column vh-100"
@@ -26,7 +50,11 @@ function Login() {
                   </span>
                 </div>
                 {/* Form */}
-                <form className="needs-validation" noValidate="">
+                <form
+                  className="needs-validation"
+                  noValidate=""
+                  onSubmit={handelSubmitFrom}
+                >
                   {/* Username */}
                   <div className="mb-3">
                     <label htmlFor="email" className="form-label">
@@ -39,6 +67,7 @@ function Login() {
                       name="email"
                       placeholder="johndoe@gmail.com"
                       required=""
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                     <div className="invalid-feedback">
                       Please enter valid username.
@@ -56,6 +85,7 @@ function Login() {
                       name="password"
                       placeholder="**************"
                       required=""
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                     <div className="invalid-feedback">
                       Please enter valid password.
@@ -95,7 +125,7 @@ function Login() {
         </div>
       </section>
 
-      {/* <BaseFooter /> */}
+      <BaseFooter />
     </>
   );
 }

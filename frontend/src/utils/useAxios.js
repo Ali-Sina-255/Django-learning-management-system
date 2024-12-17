@@ -1,18 +1,14 @@
 import axios from "axios";
-import {
-  getRefreshToken,
-  isAccessTokenExpired,
-  setAuthUser,
-  setUser,
-} from "./auth";
-import { apiBaseUrl } from "./constants";
-import Cookie from "js-cookie";
+import { getRefreshToken, isAccessTokenExpired, setAuthUser } from "./auth";
+import { API_BASE_URL } from "./constant";
+import Cookies from "js-cookie";
 
 const useAxios = () => {
-  const accessToken = Cookie.get("access_token");
-  const refreshToken = Cookie.get("refresh_token");
+  const accessToken = Cookies.get("access_token");
+  const refreshToken = Cookies.get("refresh_token");
+
   const axiosInstance = axios.create({
-    baseURL: apiBaseUrl,
+    baseURL: API_BASE_URL,
     headers: { Authorization: `Bearer ${accessToken}` },
   });
   axiosInstance.interceptors.request.use(async (req) => {

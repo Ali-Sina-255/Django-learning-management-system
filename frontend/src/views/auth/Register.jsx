@@ -6,7 +6,8 @@ import Swal from "sweetalert2";
 
 import apiInstance from "../../utils/axios";
 import { register } from "../../utils/auth";
-// frontend / src / utils / auth.js;
+import { flushSync } from "react-dom";
+
 function Register() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -20,11 +21,13 @@ function Register() {
     setIsLoading(true);
     const { error } = await register(fullName, email, password, password2);
     if (error) {
+      isLoading(false);
       alert(error.response.email);
       alert(error.response.fullName);
     } else {
       navigate("/");
       alert("registration was  successful, you have been logged in!");
+      isLoading(false);
     }
   };
   return (
@@ -115,9 +118,15 @@ function Register() {
                   </div>
                   <div>
                     <div className="d-grid">
-                      <button type="submit" className="btn btn-primary">
-                        Sign Up <i className="fas fa-user-plus"></i>
-                      </button>
+                      {isLoading === true ? (
+                        <button type="submit" className="btn btn-primary">
+                          Processing <i className="fas fa-spinner fa-spin"></i>
+                        </button>
+                      ) : (
+                        <button type="submit" className="btn btn-primary">
+                          Sign UP <i className="fas fa-user-plus"></i>
+                        </button>
+                      )}
                     </div>
                   </div>
                 </form>

@@ -6,15 +6,17 @@ const baseURl = "http://localhost:8000/";
 // login user
 export const login = async (email, password) => {
   try {
-    const { data, status } = await axios.get("user/token/", {
+    const { data, status } = await axios.post(`${baseURl}/user/login/`, {
       email,
       password,
     });
     if (status == 200) {
-      setAuthUser(data.access, data.refresher);
+      setAuthUser(data.access, data.refresh);
       alert("Login successfully!");
     }
+    return { data, error: null };
   } catch (error) {
+    console.log(error);
     return {
       data: null,
       error: error.response.data?.detail || "Something went wrong",
@@ -33,7 +35,9 @@ export const register = async (full_name, email, password, password2) => {
     });
     await login(email, password);
     alert("Registration was successfully.");
+    return { data, error: null };
   } catch (error) {
+    console.log(error);
     return {
       data: null,
       error: error.response.data?.detail || "Something went wrong",
@@ -87,7 +91,7 @@ export const setAuthUser = (access_token, refresh_token) => {
 
 export const getRefreshToken = async () => {
   const refresh_token = Cookies.get("refresh_token");
-  const response = await axios.post("user/token/refresh/", {
+  const response = await axios.post(`${baseURl}/user/refresh/`, {
     refresh: refresh_token,
   });
   return response.data;
