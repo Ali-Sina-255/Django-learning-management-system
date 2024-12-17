@@ -10,16 +10,17 @@ export const login = async (email, password) => {
       email,
       password,
     });
-    if (status == 200) {
+    if (status === 200) {
       setAuthUser(data.access, data.refresh);
       alert("Login successfully!");
     }
     return { data, error: null };
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    const errorMessage = error.response?.data?.detail || "Something went wrong";
     return {
       data: null,
-      error: error.response.data?.detail || "Something went wrong",
+      error: errorMessage,
     };
   }
 };
@@ -72,20 +73,23 @@ export const setUser = async () => {
 };
 
 export const setAuthUser = (access_token, refresh_token) => {
+  // Set the access and refresh tokens in cookies with expiration times
   Cookies.set("access_token", access_token, {
-    expires: 1,
-    secure: true,
+    expires: 1, // Access token expires in 1 day
+    secure: true, // Secure flag for HTTPS
   });
 
   Cookies.set("refresh_token", refresh_token, {
-    expires: 7,
-    secure: true,
+    expires: 7, // Refresh token expires in 7 days
+    secure: true, // Secure flag for HTTPS
   });
 
-  const user = jwt_decode("access_token") ?? null;
+  const user = jwt_decode(access_token) ?? null;
+
   if (user) {
     useAuthStore.getState().setUser(user);
   }
+
   useAuthStore.getState().setLoading(false);
 };
 

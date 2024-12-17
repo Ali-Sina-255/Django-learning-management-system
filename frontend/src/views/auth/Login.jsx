@@ -19,9 +19,12 @@ function Login() {
     e.preventDefault();
     setIsLoading(true);
     console.log("handelSubmitFrom");
+
     const { error } = await login(email, password);
+    console.log("handelSubmitFrom", error);
+
     if (error) {
-      alert(error);
+      Swal.fire("Error", error, "error");
       setIsLoading(false);
     } else {
       navigate("/");
