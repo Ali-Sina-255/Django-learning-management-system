@@ -7,7 +7,6 @@ import { login } from "../../utils/auth";
 import Swal from "sweetalert2";
 
 import { Link, useNavigate } from "react-router-dom";
-import { use } from "react";
 
 function Login() {
   const [email, setEmail] = useState("");

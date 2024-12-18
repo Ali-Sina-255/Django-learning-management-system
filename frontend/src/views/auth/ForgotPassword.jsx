@@ -1,28 +1,63 @@
-import React from 'react'
-import BaseHeader from '../partials/BaseHeader'
-import BaseFooter from '../partials/BaseFooter'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from "react";
+import BaseHeader from "../../partials/BaseHeader";
+import BaseFooter from "../../partials/BaseFooter";
 
+import { Link } from "react-router-dom";
+import apiInstance from "../../utils/axios";
+import { flushSync } from "react-dom";
 
 function ForgotPassword() {
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    if (!email) {
+      alert("Please enter your email address.");
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+    try {
+      await apiInstance
+        .get(`http://localhost:8000/user/password-rest-email/${email}`)
+        .then((response) => {
+          console.log(response.data);
+
+          setIsLoading(false);
+          alert("Email sent successfully. Please check your inbox.");
+        });
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
   return (
     <>
       <BaseHeader />
 
-      <section className="container d-flex flex-column vh-100" style={{ marginTop: "150px" }}>
+      <section
+        className="container d-flex flex-column vh-100"
+        style={{ marginTop: "150px" }}
+      >
         <div className="row align-items-center justify-content-center g-0 h-lg-100 py-8">
           <div className="col-lg-5 col-md-8 py-8 py-xl-0">
             <div className="card shadow">
               <div className="card-body p-6">
                 <div className="mb-4">
                   <h1 className="mb-1 fw-bold">Forgot Password</h1>
-                  <span>
-                    Let's help you get back into your account
-                  </span>
+                  <span>Let's help you get back into your account</span>
                 </div>
-                <form className="needs-validation" noValidate="">
+                <form
+                  className="needs-validation"
+                  noValidate=""
+                  onSubmit={(e) => e.preventDefault()}
+                >
                   <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Email Address</label>
+                    <label htmlFor="email" className="form-label">
+                      Email Address
+                    </label>
                     <input
                       type="email"
                       id="email"
@@ -30,14 +65,29 @@ function ForgotPassword() {
                       name="email"
                       placeholder="johndoe@gmail.com"
                       required=""
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
 
                   <div>
                     <div className="d-grid">
-                      <button type="submit" className="btn btn-primary">
-                        Reset Password <i className='fas fa-arrow-right'></i>
-                      </button>
+                      {isLoading === true ? (
+                        <button
+                          onClick={handleSubmit}
+                          type="submit"
+                          className="btn btn-primary"
+                        >
+                          Processing <i className="fas fa-spinner fa-spin"></i>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={handleSubmit}
+                          type="submit"
+                          className="btn btn-primary"
+                        >
+                          Rest Password <i className="fas fa-arrow-right "></i>
+                        </button>
+                      )}
                     </div>
                   </div>
                 </form>
@@ -49,7 +99,7 @@ function ForgotPassword() {
 
       <BaseFooter />
     </>
-  )
+  );
 }
 
-export default ForgotPassword
+export default ForgotPassword;
