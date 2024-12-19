@@ -1,6 +1,6 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from account.models import User, Profile
+from apps.account.models import User, Profile
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from . import models as serializer_model

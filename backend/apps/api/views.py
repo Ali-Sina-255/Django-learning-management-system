@@ -4,14 +4,15 @@ from decimal import Decimal
 from distutils.util import strtobool
 
 import requests
-from account.models import User
-from api import models as api_models
-from api import serializers as api_serializer
+from apps.account.models import User
+from apps.api import models as api_models
+from apps.api import serializers as api_serializer
 from django.conf import settings
 from django.contrib.auth.hashers import check_password
 from django.db.models import Sum
 from django.db.models.functions import ExtractMonth
 from django.shortcuts import render
+from .utils import send_reset_password_email
 from rest_framework import generics, status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.permissions import AllowAny
@@ -57,11 +58,8 @@ class PasswordRegisterEmailVerifyApiView(generics.RetrieveAPIView):
             # Send the reset password email
             send_reset_password_email(
                 self.request, user
-            )  # Call your helper function to send email
-
+            )  
         return user
-
-    # Optionally, you can override the `retrieve` method if you want to send a response or confirm email sent
     def retrieve(self, request, *args, **kwargs):
         user = self.get_object()
         if user:
@@ -80,7 +78,7 @@ class PasswordChangeApiView(generics.CreateAPIView):
         user = User.objects.get(id=uuidb64, otp=otp)
         if user:
             user.set_password(password)
-            user.opt = ""
+            user.otp = ""
             user.save()
             return Response(
                 {

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from api import models
+from apps.api import models
 
 class AdmiNCourse(admin.ModelAdmin):
     list_display = ['title','price']
