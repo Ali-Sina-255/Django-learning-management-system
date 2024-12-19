@@ -19,7 +19,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'full_name', 'email']
+        fields = '__all__'
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -207,3 +207,10 @@ class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ['user','image', 'full_name','bio', 'job_description', 'facebook', 'twitter', 'linkedin', 'counter']
         model = serializer_model.Teacher
+
+
+
+class PasswordChangeSerializer(serializers.Serializer):
+    otp = serializers.CharField(required=True)
+    uuidb64 = serializers.CharField(required=True)
+    password = serializers.CharField(required=True)

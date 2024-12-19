@@ -54,10 +54,10 @@ def send_verification_email(request, user):
     email.send()
 
 
-def send_reset_password_email(request, user):
+def send_reset_password_email(request, user, link):
     form_email = settings.DEFAULT_FROM_EMAIL
     current_site = get_current_site(request)
-    email_subject = "Reset your password "
+    email_subject = "Reset your password"
     message = render_to_string(
         "accounts/email/reset_password_email.html",
         {
@@ -65,6 +65,7 @@ def send_reset_password_email(request, user):
             "domain": current_site,
             "uid": urlsafe_base64_encode(force_bytes(user.pk)),
             "token": default_token_generator.make_token(user),
+            "link": link,  
         },
     )
     to_email = user.email
@@ -73,3 +74,18 @@ def send_reset_password_email(request, user):
     mail.send()
 
 
+<<<<<<< HEAD:backend/apps/api/utils.py
+=======
+
+def send_notification(mail_subject, mail_template, context):
+    from_email = settings.DEFAULT_FROM_EMAIL
+    message = render_to_string(mail_template, context)
+    if isinstance(context["to_email"], str):
+        to_email = []
+        to_email.append(context["to_email"])
+    else:
+        to_email = context["to_email"]
+    mail = EmailMessage(mail_subject, message, from_email, to_email)
+    mail.content_subtype = "html"
+    mail.send()
+>>>>>>> ceb4b3d8 (changing password and generated otp):backend/api/utils.py

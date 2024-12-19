@@ -19,7 +19,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-
+from .utils import send_reset_password_email
 
 def generate_random_opt_code(length=8):
     otp = "".join([str(random.randint(0, 9)) for _ in range(length)])
@@ -34,6 +34,7 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = api_serializer.RegisterSerializer
     permission_classes = [AllowAny]
+
 
 
 class PasswordRegisterEmailVerifyApiView(generics.RetrieveAPIView):
@@ -56,22 +57,30 @@ class PasswordRegisterEmailVerifyApiView(generics.RetrieveAPIView):
             print("link =====>", link)
 
             # Send the reset password email
+<<<<<<< HEAD:backend/apps/api/views.py
             send_reset_password_email(
                 self.request, user
             )  
         return user
+=======
+            send_reset_password_email(self.request, user, link)  # Updated call with link
+
+        return user
+
+>>>>>>> ceb4b3d8 (changing password and generated otp):backend/api/views.py
     def retrieve(self, request, *args, **kwargs):
         user = self.get_object()
         if user:
             return Response({"message": "Reset password email sent"})
         return Response({"message": "User not found"}, status=404)
 
-
+from django.utils.http import urlsafe_base64_decode
 class PasswordChangeApiView(generics.CreateAPIView):
     permission_classes = [AllowAny]
     serializer_class = api_serializer.UserSerializer
 
     def create(self, request, *args, **kwargs):
+<<<<<<< HEAD:backend/apps/api/views.py
         otp = request.data["otp"]
         uuidb64 = request.data["uuidb64"]
         password = request.data["password"]
@@ -80,38 +89,46 @@ class PasswordChangeApiView(generics.CreateAPIView):
             user.set_password(password)
             user.otp = ""
             user.save()
+=======
+        otp = request.data.get("otp")
+        uuidb64 = request.data.get("uuidb64")  # This is your encoded UUID
+        password = request.data.get("password")
+
+        if not otp or not uuidb64 or not password:
+>>>>>>> ceb4b3d8 (changing password and generated otp):backend/api/views.py
             return Response(
-                {
-                    "messages": "password change successfully.",
-                },
+                {"message": "Missing required fields."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            # Ensure the base64 string is decoded properly
+            user_id = urlsafe_base64_decode(uuidb64).decode("utf-8")
+
+            # Fetch the user with decoded ID and OTP
+            user = User.objects.get(id=user_id, otp=otp)
+
+            # Reset the password
+            user.set_password(password)
+            user.otp = ""  # Clear OTP after password reset
+            user.save()
+
+            return Response(
+                {"message": "Password changed successfully."},
                 status=status.HTTP_201_CREATED,
             )
-        else:
+
+        except User.DoesNotExist:
             return Response(
-                {"messages": "User Does not exists!"}, status=status.HTTP_404_NOT_FOUND
+                {"message": "User does not exist or invalid OTP."},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
-
-class ChangepasswordApiView(generics.CreateAPIView):
-    serializer_class = api_serializer.UserSerializer
-    permission_classes = [AllowAny]
-
-    def create(self, request, *args, **kwargs):
-        user_id = request.data["user_id"]
-        old_password = request.data["old_password"]
-        new_password = request.data["new_password"]
-        user = User.objects.get(id=user_id)
-        if user is not None:
-            if check_password(old_password, user.password):
-                user.set_password(new_password)
-                user.save()
-                return Response({"message": "Password changed successfully."})
-            else:
-                return Response({"message": "Old Password is not correct !."})
-
-        else:
-            return Response({"message": "Your does not exists"})
-
+        except Exception as e:
+            return Response(
+                {"message": f"Error: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 class CategoryListAPIView(generics.ListAPIView):
     queryset = api_models.Category.objects.filter(active=True)
