@@ -23,6 +23,7 @@ DJANGO_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
 ]
 
 LOCAL_APPS = [
@@ -38,7 +39,7 @@ THIRD_PARTY_APPS = [
     "drf_yasg",
 ]
 
-INSTALLED_APPS =  DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -176,9 +177,10 @@ DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 
 # Celery and Redis configuration
 # Celery configuration
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # URL for Redis broker
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'   # URL for storing results in Redis
-CELERY_ACCEPT_CONTENT = ['json']  # Specify the serialization format
-CELERY_TASK_SERIALIZER = 'json'  # Use JSON serialization for tasks
-CELERY_TIMEZONE = 'UTC'  # Timezone for task scheduling
+CELERY_BROKER_URL = "redis://localhost:6379/0"  # URL for Redis broker
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"  # URL for storing results in Redis
+CELERY_ACCEPT_CONTENT = ["json"]  # Specify the serialization format
+CELERY_TASK_SERIALIZER = "json"  # Use JSON serialization for tasks
+CELERY_TIMEZONE = "UTC"  # Timezone for task scheduling
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+SITE_ID = 1

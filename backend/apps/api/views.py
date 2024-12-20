@@ -12,14 +12,15 @@ from django.contrib.auth.hashers import check_password
 from django.db.models import Sum
 from django.db.models.functions import ExtractMonth
 from django.shortcuts import render
-from .utils import send_reset_password_email
 from rest_framework import generics, status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .utils import send_reset_password_email
+
+from .tasks import send_reset_password_email
+
 
 def generate_random_opt_code(length=8):
     otp = "".join([str(random.randint(0, 9)) for _ in range(length)])
@@ -34,7 +35,6 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = api_serializer.RegisterSerializer
     permission_classes = [AllowAny]
-
 
 
 class PasswordRegisterEmailVerifyApiView(generics.RetrieveAPIView):
@@ -57,15 +57,19 @@ class PasswordRegisterEmailVerifyApiView(generics.RetrieveAPIView):
             print("link =====>", link)
 
             # Send the reset password email
-            send_reset_password_email(self.request, user, link) 
+        send_reset_password_email.delay(user.id, link)
         return user
+
     def retrieve(self, request, *args, **kwargs):
         user = self.get_object()
         if user:
             return Response({"message": "Reset password email sent"})
         return Response({"message": "User not found"}, status=404)
 
+
 from django.utils.http import urlsafe_base64_decode
+
+
 class PasswordChangeApiView(generics.CreateAPIView):
     permission_classes = [AllowAny]
     serializer_class = api_serializer.UserSerializer
