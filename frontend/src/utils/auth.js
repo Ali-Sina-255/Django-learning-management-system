@@ -57,7 +57,6 @@ export const logout = () => {
 
   // Optionally, you can call the setLoading function to set loading to false after logout
   useAuthStore.getState().setLoading(false);
-
 };
 
 export const setUser = async () => {
@@ -101,7 +100,7 @@ export const setAuthUser = (access_token, refresh_token) => {
 
 export const getRefreshToken = async () => {
   const refresh_token = Cookies.get("refresh_token");
-  const response = await axios.post(`${baseURl}/user/refresh/`, {
+  const response = await axios.post(`${baseURl}user/token/refresh/`, {
     refresh: refresh_token,
   });
   return response.data;

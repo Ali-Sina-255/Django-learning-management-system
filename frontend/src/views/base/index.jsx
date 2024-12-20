@@ -1,8 +1,28 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import BaseHeader from "../../partials/BaseHeader";
 import BaseFooter from "../../partials/BaseFooter";
 import { Link } from "react-router-dom";
+
+import useAxios from "../../utils/useAxios";
+import apiInstance from "../../utils/axios";
 function Index() {
+  const [course, setCourse] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchCourse = async () => {
+    setIsLoading(true);
+    try {
+      await apiInstance.get(`/course/`).then((response) => {
+        console.log(response.data);
+      });
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    }
+  };
+  useEffect(() => {
+    fetchCourse();
+  }, []);
+  console.log(course);
   return (
     <>
       <BaseHeader />
