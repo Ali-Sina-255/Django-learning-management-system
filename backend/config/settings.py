@@ -172,3 +172,13 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+
+
+# Celery and Redis configuration
+# Celery configuration
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # URL for Redis broker
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'   # URL for storing results in Redis
+CELERY_ACCEPT_CONTENT = ['json']  # Specify the serialization format
+CELERY_TASK_SERIALIZER = 'json'  # Use JSON serialization for tasks
+CELERY_TIMEZONE = 'UTC'  # Timezone for task scheduling
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
