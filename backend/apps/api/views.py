@@ -57,17 +57,8 @@ class PasswordRegisterEmailVerifyApiView(generics.RetrieveAPIView):
             print("link =====>", link)
 
             # Send the reset password email
-<<<<<<< HEAD:backend/apps/api/views.py
-            send_reset_password_email(
-                self.request, user
-            )  
+            send_reset_password_email(self.request, user, link) 
         return user
-=======
-            send_reset_password_email(self.request, user, link)  # Updated call with link
-
-        return user
-
->>>>>>> ceb4b3d8 (changing password and generated otp):backend/api/views.py
     def retrieve(self, request, *args, **kwargs):
         user = self.get_object()
         if user:
@@ -80,22 +71,11 @@ class PasswordChangeApiView(generics.CreateAPIView):
     serializer_class = api_serializer.UserSerializer
 
     def create(self, request, *args, **kwargs):
-<<<<<<< HEAD:backend/apps/api/views.py
-        otp = request.data["otp"]
-        uuidb64 = request.data["uuidb64"]
-        password = request.data["password"]
-        user = User.objects.get(id=uuidb64, otp=otp)
-        if user:
-            user.set_password(password)
-            user.otp = ""
-            user.save()
-=======
         otp = request.data.get("otp")
         uuidb64 = request.data.get("uuidb64")  # This is your encoded UUID
         password = request.data.get("password")
 
         if not otp or not uuidb64 or not password:
->>>>>>> ceb4b3d8 (changing password and generated otp):backend/api/views.py
             return Response(
                 {"message": "Missing required fields."},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -129,6 +109,7 @@ class PasswordChangeApiView(generics.CreateAPIView):
                 {"message": f"Error: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
 
 class CategoryListAPIView(generics.ListAPIView):
     queryset = api_models.Category.objects.filter(active=True)

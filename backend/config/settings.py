@@ -57,11 +57,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-<<<<<<< HEAD
         "DIRS": [BASE_DIR / "templates"],
-=======
-        "DIRS": [BASE_DIR / 'templates'],
->>>>>>> ceb4b3d8 (changing password and generated otp)
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
