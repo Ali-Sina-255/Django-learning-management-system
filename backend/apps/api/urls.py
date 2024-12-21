@@ -11,5 +11,6 @@ urlpatterns = [
         api_views.PasswordRegisterEmailVerifyApiView.as_view(),
     ),
     path("user/password-change/", api_views.PasswordChangeApiView.as_view()),
-    path("course/", api_views.CourseListAPIView.as_view()),
+    path("course/course-list/", api_views.CourseListAPIView.as_view()),
+    path("course/course-detail/", api_views.CourseDetailApiView.as_view()),
 ]
