@@ -14,6 +14,7 @@
     "js-cookie": "^3.0.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-rater": "^6.0.5",
     "sweetalert2": "^11.15.0",
     "zustand": "^5.0.0-rc.2"
   },

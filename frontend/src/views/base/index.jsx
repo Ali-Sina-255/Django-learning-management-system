@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import BaseHeader from "../../partials/BaseHeader";
 import BaseFooter from "../../partials/BaseFooter";
 import { Link } from "react-router-dom";
-
+import Rater from "react-rater";
+import "react-rater/lib/react-rater.css";
 import apiInstance from "../../utils/axios";
 function Index() {
   const [courses, setCourses] = useState([]);
@@ -188,23 +189,19 @@ function Index() {
                         </h4>
                         <small>By: {course.teacher.full_name}</small> <br />
                         <small>
-                          {course.students.length} Student{" "}
+                          {course.students.length} Student
                           {course.students.length > 1 && "s"}
                         </small>
                         <br />
                         <div className="lh-1 mt-3 d-flex">
                           <span className="align-text-top">
                             <span className="fs-6">
-                              <i className="fas fa-star text-warning"></i>
-                              <i className="fas fa-star text-warning"></i>
-                              <i className="fas fa-star text-warning"></i>
-                              <i className="fas fa-star text-warning"></i>
-                              <i className="fas fa-star-half text-warning"></i>
+                              <Rater total={5} rating={course.average_rating} />
                             </span>
                           </span>
                           <span className="text-warning">4.5</span>
                           <span className="fs-6 ms-2">
-                            ({course.reviews.length} Review{" "}
+                            ({course.reviews.length} Review
                             {course.reviews.length > 1 && "s"})
                           </span>
                         </div>
