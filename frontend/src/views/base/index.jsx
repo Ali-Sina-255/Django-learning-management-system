@@ -156,8 +156,8 @@ function Index() {
               <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
                 <div className="col">
                   {courses.map((course) => (
-                    <div className="card card-hover">
-                      <Link to={`/course-detail/slug/`}>
+                    <div className="card card-hover" key={course.slug}>
+                      <Link to={`/course-detail/${course.slug}`}>
                         <img
                           src={course.image}
                           alt="course"
@@ -196,7 +196,10 @@ function Index() {
                         <div className="lh-1 mt-3 d-flex">
                           <span className="align-text-top">
                             <span className="fs-6">
-                              <Rater total={5} rating={course.average_rating} />
+                              <Rater
+                                total={5}
+                                rating={course.average_rating || 0}
+                              />
                             </span>
                           </span>
                           <span className="text-warning">4.5</span>

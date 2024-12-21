@@ -12,5 +12,5 @@ urlpatterns = [
     ),
     path("user/password-change/", api_views.PasswordChangeApiView.as_view()),
     path("course/course-list/", api_views.CourseListAPIView.as_view()),
-    path("course/course-detail/", api_views.CourseDetailApiView.as_view()),
+    path("course/course-detail/<slug>/", api_views.CourseDetailApiView.as_view()),
 ]
