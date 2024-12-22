@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import moment from "moment";
 
 import BaseHeader from "../../partials/BaseHeader";
 import BaseFooter from "../../partials/BaseFooter";
@@ -20,6 +21,8 @@ function CourseDetail() {
     });
   };
 
+  console.log("course", course);
+
   useEffect(() => {
     fetchCourseDetail();
   }, []);
@@ -35,37 +38,33 @@ function CourseDetail() {
               <div className="col-lg-8">
                 {/* Badge */}
                 <h6 className="mb-3 font-base bg-primary text-white py-2 px-4 rounded-2 d-inline-block">
-                  Web Development
+                  {/* {course.category.title} */}
                 </h6>
                 {/* Title */}
-                <h1 className="mb-3">
-                  The Comprehensive React.Js and Django Course - A Bundle of 12
-                  Courses in 1
-                </h1>
-                <p className="mb-3">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                  Doloribus facere hic quisquam suscipit aliquid distinctio
-                  repellat eum in molestias necessitatibus illum omnis autem
-                  laudantium adipisci, sit blanditiis accusantium dignissimos
-                  veniam!
-                </p>
+                <h1 className="mb-3">{course.title}</h1>
+                <p
+                  className="mb-3"
+                  dangerouslySetInnerHTML={{
+                    __html: `${course.description?.slice(0, 500)}......`,
+                  }}
+                ></p>
                 {/* Content */}
                 <ul className="list-inline mb-0">
                   <li className="list-inline-item h6 me-3 mb-1 mb-sm-0">
                     <i className="fas fa-star text-warning me-2" />
-                    4.5/5.0
+                    {course.average_rating}/5.0
                   </li>
                   <li className="list-inline-item h6 me-3 mb-1 mb-sm-0">
                     <i className="fas fa-user-graduate text-orange me-2" />
-                    12k Enrolled
+                    {course.students?.length | 0} Enrolled
                   </li>
                   <li className="list-inline-item h6 me-3 mb-1 mb-sm-0">
                     <i className="fas fa-signal text-success me-2" />
-                    All levels
+                    {course.level}
                   </li>
                   <li className="list-inline-item h6 me-3 mb-1 mb-sm-0">
                     <i className="bi bi-patch-exclamation-fill text-danger me-2" />
-                    Date Published 09/2021
+                    {moment(course.date).format("DD MMM. YYYY")}
                   </li>
                   <li className="list-inline-item h6 mb-0">
                     <i className="fas fa-globe text-info me-2" />
@@ -202,48 +201,12 @@ function CourseDetail() {
                         aria-labelledby="course-pills-tab-1"
                       >
                         <h5 className="mb-3">Course Description</h5>
-                        <p className="mb-3">
-                          Welcome to the
-                          <strong>
-                            Digital Marketing Ultimate Course Bundle - 12
-                            Courses in 1 (Over 36 hours of content)
-                          </strong>
-                        </p>
-                        <p className="mb-3">
-                          In this practical hands-on training, you’re going to
-                          learn to become a digital marketing expert with this
-                          <strong>
-                            ultimate course bundle that includes 12 digital
-                            marketing courses in 1!
-                          </strong>
-                        </p>
-                        <p className="mb-3">
-                          If you wish to find out the skills that should be
-                          covered in a basic digital marketing course syllabus
-                          in India or anywhere around the world, then reading
-                          this blog will help. Before we delve into the advanced
-                          <strong>
-                            <a
-                              href="#"
-                              className="text-reset text-decoration-underline"
-                            >
-                              digital marketing course
-                            </a>
-                          </strong>
-                          syllabus, let’s look at the scope of digital marketing
-                          and what the future holds.
-                        </p>
-                        <p className="mb-0">
-                          We focus a great deal on the understanding of
-                          behavioral psychology and influence triggers which are
-                          crucial for becoming a well rounded Digital Marketer.
-                          We understand that theory is important to build a
-                          solid foundation, we understand that theory alone
-                          isn’t going to get the job done so that’s why this
-                          course is packed with practical hands-on examples that
-                          you can follow step by step.
-                        </p>
-                        {/* List content */}
+                        <p
+                          className="mb-3"
+                          dangerouslySetInnerHTML={{
+                            __html: `${course.description}`,
+                          }}
+                        ></p>
                         <h5 className="mt-4">What you’ll learn</h5>
                         <ul className="list-group list-group-borderless mb-3">
                           <li className="list-group-item h6 fw-light d-flex mb-0">
