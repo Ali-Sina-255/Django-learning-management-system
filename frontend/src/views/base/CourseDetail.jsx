@@ -277,195 +277,52 @@ function CourseDetail() {
                           className="accordion accordion-icon accordion-bg-light"
                           id="accordionExample2"
                         >
-                          {/* Item */}
-                          <div className="accordion-item mb-3">
-                            <h6
-                              className="accordion-header font-base"
-                              id="heading-1"
-                            >
-                              <button
-                                className="accordion-button fw-bold rounded d-sm-flex d-inline-block collapsed"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#collapse-1"
-                                aria-expanded="true"
-                                aria-controls="collapse-1"
+                          {course?.curriculum?.map((c, index) => (
+                            <div className="accordion-item mb-3" key={index}>
+                              <h6
+                                className="accordion-header font-base"
+                                id="heading-1"
                               >
-                                Introduction of Digital Marketing
-                                <span className="small ms-0 ms-sm-2">
-                                  (3 Lectures)
-                                </span>
-                              </button>
-                            </h6>
-                            <div
-                              id="collapse-1"
-                              className="accordion-collapse collapse show"
-                              aria-labelledby="heading-1"
-                              data-bs-parent="#accordionExample2"
-                            >
-                              <div className="accordion-body mt-3">
-                                {/* Course lecture */}
-                                <div className="d-flex justify-content-between align-items-center">
-                                  <div className="position-relative d-flex align-items-center">
-                                    <a
-                                      href="#"
-                                      className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                    >
-                                      <i className="fas fa-play me-0" />
-                                    </a>
-                                    <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
-                                      Introduction
-                                    </span>
-                                  </div>
-                                  <p className="mb-0">2m 10s</p>
-                                </div>
-                                <hr /> {/* Divider */}
-                                {/* Course lecture */}
-                                <div className="d-flex justify-content-between align-items-center">
-                                  <div className="position-relative d-flex align-items-center">
-                                    <a
-                                      href="#"
-                                      className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                    >
-                                      <i className="fas fa-play me-0" />
-                                    </a>
-                                    <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
-                                      What is Digital Marketing What is Digital
-                                      Marketing
-                                    </span>
-                                  </div>
-                                  <p className="mb-0 text-truncate">15m 10s</p>
-                                </div>
-                                <hr /> {/* Divider */}
-                                {/* Course lecture */}
-                                <div className="d-flex justify-content-between align-items-center">
-                                  <div className="position-relative d-flex align-items-center">
-                                    <a
-                                      href="#"
-                                      className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                    >
-                                      <i className="fas fa-lock me-0" />
-                                    </a>
-                                    <span className="d-inline-block text-truncate text-muted ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
-                                      Type of Digital Marketing
-                                    </span>
-                                  </div>
-                                  <p className="mb-0">18m 10s</p>
+                                <button
+                                  className="accordion-button fw-bold rounded d-sm-flex d-inline-block collapsed"
+                                  type="button"
+                                  data-bs-toggle="collapse"
+                                  data-bs-target={`#collapse-${c.variant_id}`}
+                                  aria-expanded="true"
+                                  aria-controls={`collapse-${c.variant_id}`}
+                                >
+                                  {c.title}
+                                </button>
+                              </h6>
+                              <div
+                                id={`collapse-${c.variant_id}`}
+                                className="accordion-collapse collapse show"
+                                aria-labelledby="heading-1"
+                                data-bs-parent="#accordionExample2"
+                              >
+                                <div className="accordion-body mt-3">
+                                  {/* Course lecture */}
+
+                                  <>
+                                    <div className="d-flex justify-content-between align-items-center">
+                                      <div className="position-relative d-flex align-items-center">
+                                        <a
+                                          href="#"
+                                          className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
+                                        >
+                                          <i className="fas fa-play me-0" />
+                                        </a>
+                                        <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
+                                          Introduction
+                                        </span>
+                                      </div>
+                                      <p className="mb-0">2m 10s</p>
+                                    </div>
+                                  </>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          {/* Item */}
-                          <div className="accordion-item mb-3">
-                            <h6
-                              className="accordion-header font-base"
-                              id="heading-2"
-                            >
-                              <button
-                                className="accordion-button fw-bold collapsed rounded d-sm-flex d-inline-block"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#collapse-2"
-                                aria-expanded="false"
-                                aria-controls="collapse-2"
-                              >
-                                Customer Life cycle
-                                <span className="small ms-0 ms-sm-2">
-                                  (4 Lectures)
-                                </span>
-                              </button>
-                            </h6>
-                            <div
-                              id="collapse-2"
-                              className="accordion-collapse collapse"
-                              aria-labelledby="heading-2"
-                              data-bs-parent="#accordionExample2"
-                            >
-                              {/* Accordion body START */}
-                              <div className="accordion-body mt-3">
-                                {/* Course lecture */}
-                                <div className="d-flex justify-content-between align-items-center">
-                                  <div className="position-relative d-flex align-items-center">
-                                    <a
-                                      href="#"
-                                      className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                    >
-                                      <i className="fas fa-play me-0" />
-                                    </a>
-                                    <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
-                                      What is Digital Marketing
-                                    </span>
-                                  </div>
-                                  <p className="mb-0">11m 20s</p>
-                                </div>
-                                <hr /> {/* Divider */}
-                                {/* Course lecture */}
-                                <div className="d-flex justify-content-between align-items-center">
-                                  <div className="position-relative d-flex align-items-center">
-                                    <a
-                                      href="#"
-                                      className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                    >
-                                      <i className="fas fa-play me-0" />
-                                    </a>
-                                    <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
-                                      15 Tips for Writing Magnetic Headlines
-                                    </span>
-                                  </div>
-                                  <p className="mb-0 text-truncate">25m 20s</p>
-                                </div>
-                                <hr /> {/* Divider */}
-                                {/* Course lecture */}
-                                <div className="d-flex justify-content-between align-items-center">
-                                  <div className="position-relative d-flex align-items-center">
-                                    <a
-                                      href="#"
-                                      className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                    >
-                                      <i className="fas fa-play me-0" />
-                                    </a>
-                                    <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
-                                      How to Write Like Your Customers Talk
-                                    </span>
-                                  </div>
-                                  <p className="mb-0">11m 30s</p>
-                                </div>
-                                <hr /> {/* Divider */}
-                                {/* Course lecture */}
-                                <div className="d-flex justify-content-between align-items-center">
-                                  <div className="position-relative d-flex align-items-center">
-                                    <div>
-                                      <a
-                                        href="#"
-                                        className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal"
-                                      >
-                                        <i className="fas fa-play me-0" />
-                                      </a>
-                                    </div>
-                                    <div className="row g-sm-0 align-items-center">
-                                      <div className="col-sm-6">
-                                        <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-md-400px">
-                                          How to Flip Features Into Benefits
-                                        </span>
-                                      </div>
-                                      <div className="col-sm-6">
-                                        <span className="badge text-bg-orange ms-2 ms-md-0">
-                                          <i className="fas fa-lock fa-fw me-1" />
-                                          Premium
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <p className="mb-0 d-inline-block text-truncate w-70px w-sm-60px">
-                                    35m 30s
-                                  </p>
-                                </div>
-                              </div>
-                              {/* Accordion body END */}
-                            </div>
-                          </div>
+                          ))}
                         </div>
                         {/* Course accordion END */}
                       </div>
