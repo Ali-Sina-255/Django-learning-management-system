@@ -167,7 +167,7 @@ class VariantItem(models.Model):
     )
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    file = models.FileField(upload_to="course-file")
+    file = models.FileField(upload_to="course-file", blank=True, null=True)
     variant_item_id = ShortUUIDField(
         unique=True, length=6, max_length=30, alphabet="1234567890"
     )
@@ -187,7 +187,7 @@ class VariantItem(models.Model):
             minutes, remainder = divmod(duration_seconds, 60)
             minutes = math.floor(minutes)
             seconds = math.floor(remainder)
-            duration_text = f"{minutes}m {seconds}s"  # e.g., 60m 30s
+            duration_text = f"{minutes}m {seconds}s"
             self.content_duration = duration_text
             super().save(update_fields=["content_duration"])
 

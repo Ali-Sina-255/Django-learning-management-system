@@ -72,18 +72,35 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ["title", "image", "slug", "course_count"]
 
 
-class VariantSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = ["course", "title", "variant_id", "date"]
-        model = serializer_model.Variant
-
-
 class VariantItemSerializer(serializers.ModelSerializer):
-    variant = VariantSerializer()
+    class Meta:
+        model = serializer_model.VariantItem
+        fields = [
+            "title",
+            "description",
+            "file",
+            "variant_item_id",
+            "duration",
+            "content_duration",
+            "preview",
+            "date",
+        ]
+
+
+# Variant serializer
+class VariantSerializer(serializers.ModelSerializer):
+    # Correctly serialize the related 'variant_items' using the VariantItemSerializer
+    variant_items = VariantItemSerializer(
+        many=True
+    )  # This will serialize related VariantItems
+    course = serializers.CharField(
+        source="course.title"
+    )  # Serialize the course title from the related Course model
 
     class Meta:
-        fields = "__all__"
-        model = serializer_model.VariantItem
+        model = serializer_model.CompletedLesson
+        model = serializer_model.Variant
+        fields = ["course", "title", "variant_id", "date", "variant_items"]
 
 
 class CompletedLessonSerializer(serializers.ModelSerializer):
