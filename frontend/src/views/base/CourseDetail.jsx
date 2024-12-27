@@ -10,7 +10,7 @@ import apiInstance from "../../utils/axios";
 function CourseDetail() {
   const [course, setCourse] = useState([]);
   const [isLoading, setIsLoading] = useState([]);
-
+  const [isOpen, setIsOpen] = useState(false);
   const param = useParams();
   console.log("Parm ", param);
   const fetchCourseDetail = async () => {
@@ -284,41 +284,42 @@ function CourseDetail() {
                                 id="heading-1"
                               >
                                 <button
-                                  className="accordion-button fw-bold rounded d-sm-flex d-inline-block collapsed"
-                                  type="button"
-                                  data-bs-toggle="collapse"
-                                  data-bs-target={`#collapse-${c.variant_id}`}
-                                  aria-expanded="true"
-                                  aria-controls={`collapse-${c.variant_id}`}
+                                    className="accordion-button fw-bold rounded d-sm-flex d-inline-block collapsed"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target={`#collapse-${c.variant_id}`}
+                                    aria-expanded={isOpen ? "true" : "false"}
+                                    aria-controls={`collapse-${c.variant_id}`}
                                 >
                                   {c.title}
                                 </button>
                               </h6>
                               <div
-                                id={`collapse-${c.variant_id}`}
-                                className="accordion-collapse collapse show"
-                                aria-labelledby="heading-1"
-                                data-bs-parent="#accordionExample2"
+                                  id={`collapse-${c.variant_id}`}
+                                  // className={`accordion-collapse collapse ${isOpen ? 'show' : ''}`}
+                                  className='accordion-collapse collapse show'
+                                  aria-labelledby="heading-1"
+                                  data-bs-parent="#accordionExample2"
                               >
-                                <div className="accordion-body mt-3">
-                                  {/* Course lecture */}
 
-                                  <>
-                                    <div className="d-flex justify-content-between align-items-center">
-                                      <div className="position-relative d-flex align-items-center">
-                                        <a
-                                          href="#"
-                                          className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
-                                        >
-                                          <i className="fas fa-play me-0" />
-                                        </a>
-                                        <span className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
-                                          Introduction
-                                        </span>
+                                <div className="accordion-body mt-3">
+                                  {c.variant_items.map((l, index) => (
+                                      <div className="d-flex justify-content-between align-items-center" key={index}>
+                                        <div className="position-relative d-flex align-items-center">
+                                          <a
+                                              href="#"
+                                              className="btn btn-danger-soft btn-round btn-sm mb-0 stretched-link position-static"
+                                          >
+                                            <i className="fas fa-play me-0"/>
+                                          </a>
+                                          <span
+                                              className="d-inline-block text-truncate ms-2 mb-0 h6 fw-light w-100px w-sm-200px w-md-400px">
+                              {l.title}
+                        </span>
+                                        </div>
+                                        <p className="mb-0">{l.content_duration}</p>
                                       </div>
-                                      <p className="mb-0">2m 10s</p>
-                                    </div>
-                                  </>
+                                  ))}
                                 </div>
                               </div>
                             </div>
@@ -329,18 +330,18 @@ function CourseDetail() {
                       {/* Content END */}
                       {/* Content START */}
                       <div
-                        className="tab-pane fade"
-                        id="course-pills-3"
-                        role="tabpanel"
-                        aria-labelledby="course-pills-tab-3"
+                          className="tab-pane fade"
+                          id="course-pills-3"
+                          role="tabpanel"
+                          aria-labelledby="course-pills-tab-3"
                       >
                         {/* Card START */}
                         <div className="card mb-0 mb-md-4">
                           <div className="row g-0 align-items-center">
-                            <div className="col-md-5">
+                          <div className="col-md-5">
                               {/* Image */}
                               <img
-                                src="https://geeksui.codescandy.com/geeks/assets/images/avatar/avatar-3.jpg"
+                                src={course.image}
                                 className="img-fluid rounded-3"
                                 alt="instructor-image"
                               />
@@ -350,10 +351,10 @@ function CourseDetail() {
                               <div className="card-body">
                                 {/* Title */}
                                 <h3 className="card-title mb-0">
-                                  Destiny Franks
+                                  {course.teacher.full_name}
                                 </h3>
                                 <p className="mb-2">
-                                  Instructor of Web/Mobile App Development
+                                  {course.teacher.bio}
                                 </p>
                                 {/* Social button */}
                                 <ul className="list-inline mb-3">
@@ -381,22 +382,7 @@ function CourseDetail() {
                         {/* Instructor info */}
                         <h5 className="mb-3">About Instructor</h5>
                         <p className="mb-3">
-                          Fulfilled direction use continual set him propriety
-                          continued. Saw met applauded favorite deficient
-                          engrossed concealed and her. Concluded boy perpetual
-                          old supposing. Farther related bed and passage comfort
-                          civilly. Dashboard see frankness objection abilities.
-                          As hastened oh produced prospect formerly up am.
-                          Placing forming nay looking old married few has.
-                          Margaret disposed of add screened rendered six say his
-                          striking confined.
-                        </p>
-                        <p className="mb-3">
-                          As it so contrasted oh estimating instrument. Size
-                          like body someone had. Are conduct viewing boy minutes
-                          warrant the expense? Tolerably behavior may admit
-                          daughters offending her ask own. Praise effect wishes
-                          change way and any wanted.
+                          {course.teacher.bio}
                         </p>
                       </div>
                       <div
@@ -415,7 +401,7 @@ function CourseDetail() {
                             <div className="avatar avatar-xl me-4 flex-shrink-0">
                               <img
                                 className="avatar-img rounded-circle"
-                                src="https://geeksui.codescandy.com/geeks/assets/images/avatar/avatar-1.jpg"
+                                src={course.image}
                                 style={{
                                   width: "50px",
                                   height: "50px",
@@ -508,7 +494,6 @@ function CourseDetail() {
                           <hr />
                         </div>
                         {/* Student review END */}
-                        {/* Leave Review START */}
                         <div className="mt-2">
                           <h5 className="mb-4">Leave a Review</h5>
                           <form className="row g-3">

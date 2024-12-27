@@ -89,18 +89,12 @@ class VariantItemSerializer(serializers.ModelSerializer):
 
 # Variant serializer
 class VariantSerializer(serializers.ModelSerializer):
-    # Correctly serialize the related 'variant_items' using the VariantItemSerializer
-    variant_items = VariantItemSerializer(
-        many=True
-    )  # This will serialize related VariantItems
-    course = serializers.CharField(
-        source="course.title"
-    )  # Serialize the course title from the related Course model
+
+    variant_items = VariantItemSerializer(many=True)
 
     class Meta:
-        model = serializer_model.CompletedLesson
         model = serializer_model.Variant
-        fields = ["course", "title", "variant_id", "date", "variant_items"]
+        fields = "__all__"
 
 
 class CompletedLessonSerializer(serializers.ModelSerializer):
@@ -156,8 +150,9 @@ class EnrolledCourseSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     students = EnrolledCourseSerializer(many=True)
     curriculum = VariantSerializer(many=True)
-    lectures = VariantSerializer(many=True)
+    lectures = VariantItemSerializer(many=True)
     reviews = ReviewSerializer(many=True)
+
 
     class Meta:
         model = serializer_model.Course
